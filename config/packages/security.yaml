@@ -1,0 +1,31 @@
+security:
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
+    providers: 
+        users:
+            entity:
+                class: App\Entity\User
+                property: cedula   # Aquí cambiamos 'email' por 'cedula'
+
+    firewalls:
+        main:
+            lazy: true
+            provider: users
+            entry_point: App\Security\LoginFormAuthenticator  # Especificamos el entry_point
+            custom_authenticator: App\Security\LoginFormAuthenticator
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                default_target_path: app_persona_index # Redirige aquí tras login
+            logout:
+                path: app_logout
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                path: /
+                always_remember_me: true
+
+    access_control:
+        - { path: ^/persona, roles: ROLE_USER }
+        - { path: ^/profile, roles: ROLE_USER }
